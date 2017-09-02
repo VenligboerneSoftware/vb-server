@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Mitchell Sayer">
+
+    <!-- Title -->
+    <title>Venligboerne - Admin</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Karla:400,700' rel='stylesheet' type='text/css'>
+
+    <!-- CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css" rel='stylesheet' type='text/css'>
+    <link href="css/site.css" rel='stylesheet' type='text/css'>
+
+    <!-- JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/3.6.6/firebase.js"></script>
+    <!-- AngularFire -->
+    <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
+
+    <!-- Angular -->
+    <script src="js/app.js"></script>
+
+    <script src="js/APIKeys.js"></script>
+</head>
+
+<body ng-app="app" ng-controller="appController" ng-init="isAdminPage = true;" ng-cloak>
+    <main>
+      <div class="container">
+      <div class="row">
+          <h1 class="center-align">Admin Portal</h1>
+          <ul class="tabs z-depth-1">
+              <li class="tab col s6"><a href="#centers" class="active">Centers</a></li>
+              <li class="tab col s6"><a href="#categories">Categories</a></li>
+              <li class="tab col s6"><a href="#posts" class="active">Posts</a></li>
+              <li class="tab col s6"><a href="#users">Users</a></li>
+              <li class="tab col s6"><a href="#languageOptions">Language</a></li>
+          </ul>
+          <div id="posts">
+              <div class="col s12">
+                  <div class="row hide-on-small-only">
+                      <div class="col s6">
+                          <h3>Posts</h3>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col s12">
+                          <table class="highlight bordered centered responsive-table">
+                              <thead>
+                                  <tr>
+                                      <th data-field="title">Title</th>
+                                      <th data-field="description">Description</th>
+                                      <th data-field="formatted_address">Address</th>
+                                      <th data-field="icon">Icon</th>
+                                      <th data-field="remove">Delete Post</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr ng-repeat="post in posts">
+                                      <td>{{post.title.original}}</td>
+                                      <td>{{post.description.original}}</td>
+                                      <td>{{post.formatted_address}}</td>
+                                      <td>{{post.icon}}</td>
+                                      <td><i class="small material-icons clickable-icons red-text" title="Cancel" ng-click="removePost('posts', posts, post)">delete_forever</i></td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <div id="users">
+              <div ng-hide="!usersFlags" style="position: fixed; top: 0; bottom: 0; left: 0; right: 0; background-color: rgba(0,0,0,0.5); z-index: 100;">
+                <div style="background-color: white; margin: 20%">
+                  <a class='waves-effect waves-light btn blue right' ng-click="usersFlags = null">Close</a>
+                  This user was reported by another user (or users) because their posts
+                  or applications to events were deemed inappropriate. Review what other
+                  users had to say about this user, and ban them from the app if necessary.
+                  <table class="highlight bordered centered responsive-table">
+                      <thead>
+                          <tr>
+                              <th>Reported By</th>
+                              <th>Reason</th>
+                              <th>Regarding</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr ng-repeat="flag in usersFlags">
+                              <td>{{flag.flaggingUser}}</td>
+                              <td>{{flag.reason}}</td>
+                              <td><h6>{{flag.type}}</h6>{{flag.regarding}}</td>
+                          </tr>
+                      </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="col s12">
+                  <div class="row hide-on-small-only">
+                      <div class="col s6">
+                          <h3>Users</h3>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col s12">
+                          <table class="highlight bordered centered responsive-table">
+                              <thead>
+                                  <tr>
+                                      <th data-field="displayName">Name</th>
+                                      <th data-field="flagged">Flagged?</th>
+                                      <th data-field="permissions">Permissions</th>
+                                      <th data-field="ban">Make Banned User</th>
+                                      <th data-field="normal">Make Normal User</th>
+                                      <th data-field="suoer">Super User</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr ng-repeat="(userID, user) in users">
+                                      <td>{{user.displayName}}</td>
+                                      <td>
+                                        <div ng-hide="!flags[userID]">
+                                          Yes<br>
+                                          <a class='waves-effect waves-light btn blue' ng-click="viewFlags(userID)">Why?</a>
+                                        </div>
+                                        <div ng-hide="flags[userID]">No</div>
+                                      </td>
+                                      <td>{{user.permissions}}</td>
+                                      <td>
+                                        <i class="small material-icons clickable-icons red-text" title="Cancel" ng-hide="user.permissions == 'banned'" ng-click="changeUserPermissions(user, users, 'banned')">cancel</i>
+                                        <i class="small material-icons clickable-icons green-text" ng-click="changeUserAdminRole(user)" ng-show="user.permissions == 'banned'">done</i>
+                                      </td>
+                                      <td>
+                                        <i class="small material-icons clickable-icons" ng-hide="user.permissions == 'normal'" ng-click="changeUserPermissions(user, users, 'normal')">face</i>
+                                        <i class="small material-icons clickable-icons green-text" ng-show="user.permissions == 'normal'">done</i>
+                                      </td>
+                                      <td>
+                                        <i class="small material-icons clickable-icons" ng-hide="user.permissions == 'superuser'" ng-click="changeUserPermissions(user, users, 'superuser')">people</i>
+                                        <i class="small material-icons clickable-icons green-text" ng-show="user.permissions == 'superuser'">done</i>
+                                      </td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <div id="centers">
+              <div class="col s12">
+                  <div class="row hide-on-small-only">
+                      <div class="col s6">
+                          <h3>Centers</h3>
+                      </div>
+                      <div class="col s6">
+                          <div class="right-align">
+                              <a href="/centers" class="waves-effect waves-light btn blue add-patient-button">Add Center</a>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col s12">
+                          <table class="highlight bordered centered responsive-table">
+                              <thead>
+                                  <tr>
+                                      <th data-field="title">Title</th>
+                                      <th data-field="address">Address</th>
+                                      <th data-field="phone">Phone</th>
+                                      <th data-field="image">Image Url</th>
+                                      <th data-field="delete">Delete Center</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr ng-repeat="center in centers">
+                                      <td class="clickable" ng-click="prepareEditField(centers, center, 'title')">
+                                          <span ng-hide="center.editing.title">{{center.title}}</span>
+                                          <form ng-show="center.editing.title" ng-submit="editField(center, 'centers', 'title', center.title)">
+                                              <input placeholder="title" id="center_title" type="text" ng-model="center.title">
+                                              <button class="btn hide" type="submit"></button>
+                                          </form>
+                                      </td>
+                                      <td class="clickable" ng-click="prepareEditField(centers, center, 'address')">
+                                          <span ng-hide="center.editing.address">{{center.address}}</span>
+                                          <form ng-show="center.editing.address" ng-submit="editField(center, 'centers', 'address', center.address)">
+                                              <input placeholder="address" id="center_address" type="text" ng-model="center.address">
+                                              <button class="btn hide" type="submit"></button>
+                                          </form>
+                                      </td>
+                                      <td class="clickable" ng-click="prepareEditField(centers, center, 'phone')">
+                                          <span ng-hide="center.editing.phone">{{center.phone}}</span>
+                                          <form ng-show="center.editing.phone" ng-submit="editField(center, 'centers', 'phone', center.phone)">
+                                              <input placeholder="phone" id="center_phone" type="text" ng-model="center.phone">
+                                              <button class="btn hide" type="submit"></button>
+                                          </form>
+                                      </td>
+                                      <td class="clickable" ng-click="prepareEditField(centers, center, 'image')">
+                                        <img ng-hide="center.editing.image" ng-src="{{center.image}}" style="width:100px; height: 100px;"/>
+                                        <input
+                                          ng-show="center.editing.image"
+                                          ng-model="photo"
+                                          onchange="angular.element(this).scope().file_changed(this, angular.element(this).scope().center, 'image', 'centerImages', 'centers')"
+                                          type="file" accept="image/*"
+                                        />
+                                      </td>
+                                      <td><i class="small material-icons clickable-icons red-text" title="Cancel" ng-click="removeField('centers', centers, center)">delete_forever</i></td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <div id="categories">
+              <div class="col s12">
+                  <div class="row hide-on-small-only">
+                      <div class="col s6">
+                          <h3>Categories</h3>
+                      </div>
+                      <div class="col s6">
+                          <div class="right-align">
+                              <a href="/categories" class="waves-effect waves-light btn blue add-patient-button">Add Category</a>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col s12">
+                          <table class="highlight bordered centered responsive-table">
+                              <thead>
+                                  <tr>
+                                      <th data-field="title">Title</th>
+                                      <th data-field="icon">Icon</th>
+                                      <th data-field="src">Image</th>
+                                      <th data-field="OfferPin">Pin</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr ng-repeat="category in categories">
+                                      <td class="clickable" ng-click="prepareEditField(categories, category, 'title')">
+                                          <span ng-hide="category.editing.title">{{category.title}}</span>
+                                          <form ng-show="category.editing.title" ng-submit="editField(category, 'categories', 'title', category.title)">
+                                              <input placeholder="title" id="category_title" type="text" ng-model="category.title">
+                                              <button class="btn hide" type="submit"></button>
+                                          </form>
+                                      </td>
+                                      <td class="clickable" ng-click="prepareEditField(categories, category, 'icon')">
+                                          <span ng-hide="category.editing.icon">{{category.icon}}</span>
+                                          <form ng-show="category.editing.icon" ng-submit="editField(category, 'categories', 'icon', category.icon)">
+                                              <input placeholder="icon" id="category_icon" type="text" ng-model="category.icon">
+                                              <button class="btn hide" type="submit"></button>
+                                          </form>
+                                      </td>
+                                      <td class="clickable" ng-click="prepareEditField(categories, category, 'iconURL')">
+                                        <img ng-hide="category.editing.iconURL" ng-src="{{category.iconURL}}" style="width:50px; height: 50px;"/>
+                                        <input
+                                          ng-show="category.editing.iconURL"
+                                          ng-model="photo"
+                                          onchange="angular.element(this).scope().file_changed(this, angular.element(this).scope().category, 'iconURL', 'icons', 'categories')"
+                                          type="file" accept="image/*"
+                                        />
+                                      </td>
+                                      <td class="clickable" ng-click="prepareEditField(categories, category, 'pinURL')">
+                                        <img ng-hide="category.editing.pinURL" ng-src="{{category.pinURL}}" style="width:50px; height: 50px;"/>
+                                        <input
+                                          ng-show="category.editing.pinURL"
+                                          ng-model="photo"
+                                          onchange="angular.element(this).scope().file_changed(this, angular.element(this).scope().category, 'pinURL', 'pins', 'categories')"
+                                          type="file" accept="image/*"
+                                        />
+                                      </td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <div id="languageOptions">
+              <div class="col s12">
+                  <div class="row hide-on-small-only">
+                      <div class="col s6">
+                          <h3>Languages</h3>
+                      </div>
+                      <div class="col s6">
+                          <div class="right-align">
+                              <a href="/language" class="waves-effect waves-light btn blue add-patient-button">Change Translations</a>
+                              <a href="/languageOptions" class="waves-effect waves-light btn blue add-patient-button">Add Language</a>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col s12">
+                          <table class="highlight bordered centered responsive-table">
+                              <thead>
+                                  <tr>
+                                      <th data-field="name">Name</th>
+                                      <th data-field="flag">Flag</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr ng-repeat="languageOption in languageOptions">
+                                      <td class="clickable" ng-click="prepareEditField(languageOptions, languageOption, 'name')">
+                                          <span ng-hide="languageOption.editing.name">{{languageOption.name}}</span>
+                                          <form ng-show="languageOption.editing.name" ng-submit="editField(languageOption, 'languageOptions', 'name', languageOption.name)">
+                                              <input placeholder="name" id="languageOption_name" type="text" ng-model="languageOption.name">
+                                              <button class="btn hide" type="submit"></button>
+                                          </form>
+                                      </td>
+                                      <td class="clickable" ng-click="prepareEditField(languageOptions, languageOption, 'flag')">
+                                        <img ng-hide="languageOption.editing.flag" ng-src="{{languageOption.flag}}" style="height: 100px;"/>
+                                        <input
+                                          ng-show="languageOption.editing.flag"
+                                          ng-model="photo"
+                                          onchange="angular.element(this).scope().file_changed(this, angular.element(this).scope().languageOption, 'flag', 'languageOptionFlags', 'languageOptions')"
+                                          type="file" accept="image/*"
+                                        />
+                                      </td>
+                                      <td><i class="small material-icons clickable-icons red-text" title="Cancel" ng-click="removeField('languageOptions', languageOptions, languageOption)">delete_forever</i></td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </main>
+</body>
+</html>

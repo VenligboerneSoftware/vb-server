@@ -1,0 +1,236 @@
+[ng\:cloak],
+[ng-cloak],
+[data-ng-cloak],
+[x-ng-cloak],
+.ng-cloak,
+.x-ng-cloak {
+    display: none !important;
+}
+
+body {
+    font-family: 'Karla', sans-serif;
+    font-weight: 400;
+    overflow-x: hidden;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+
+/* Custom footer */
+
+.inline-images-padding {
+    padding-bottom: 1.5em;
+}
+
+.inline-images {
+    display: inline-block;
+}
+
+.inline-images > a {
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.inline-images > a:hover {
+    opacity: 0.7;
+}
+
+.inline-images > a > img {
+    max-height: 32px;
+    width: auto;
+}
+
+
+/* Front page */
+
+.outline-text {
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+#ucaan-logo-image {
+    position: absolute;
+    max-width: 40%;
+    left: 50%;
+    transform: translate(-50%, -5%);
+    z-index: 0;
+}
+
+@media only screen and (min-width: 1000px) {
+    #ucaan-logo-image {
+        padding-left: 3em;
+        max-width: 21%;
+        left: 0%;
+        top: -20%;
+        transform: translate(0%, 0%);
+    }
+}
+
+.ucaan-navbar-buttons {
+    padding-right: 2em;
+}
+
+.ucaan-navbar-button:hover {
+    background-color: #8e24aa !important;
+}
+
+.ucaan-settings-button:hover {
+    background-color: #2196f3 !important;
+}
+
+.waves-effect.waves-blue .waves-ripple {
+    background-color: #2196f3;
+}
+
+#ucaan-mobile-navbar {
+    font-weight: 400;
+}
+
+#ucaan-mobile-activate {
+    padding-left: 2em;
+}
+
+#ucaan-description-background {
+    background: url('/static/images/main-background.jpg') no-repeat center center fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    padding-top: 13em;
+    padding-bottom: 13em;
+}
+
+#ucaan-learn-more-button {
+    border: 1px solid #000;
+}
+
+.ucaan-background-image {
+    max-width: 100%;
+}
+
+#ucaan-description-button {
+    color: black;
+}
+
+#ucaan-description {
+    padding-bottom: 1em;
+    color: white;
+    font-family: 'Cabin', sans-serif;
+}
+
+#what-is-ucaan {
+    padding-top: 2em;
+    padding-bottom: 1.5em;
+    background-color: black;
+}
+
+#ucaan-ribbon {
+    max-height: 12em;
+    width: auto;
+}
+
+#what-is-ucaan-text {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    color: white;
+    font-weight: 700;
+}
+
+#ucaan-slideshow {
+    padding-top: 3em;
+    padding-bottom: 3em;
+    background-color: whitesmoke;
+}
+
+#ucaan-slideshow-container {
+    padding-bottom: 1em;
+}
+
+
+/* Authenicated/not authenicated adjustments */
+
+.defer-login {
+    padding-top: 8em;
+    padding-bottom: 8em;
+}
+
+.defer-login-text {
+    padding-bottom: 1em;
+}
+
+
+/* Options */
+
+.red-text {
+    color: red;
+}
+
+
+/* Profile */
+
+.center-image {
+    display: block;
+    margin: 0 auto;
+}
+
+#profile-image-padding {
+    padding-bottom: 2em;
+}
+
+#profile-image {
+    height: 100px;
+    width: auto;
+}
+
+#profile-image-text {
+    padding-top: 1em;
+    font-size: 14px;
+}
+
+.profile-text {
+    font-size: 20px;
+    line-height: 250%;
+}
+
+
+/* Random padding classes */
+
+.add-patient-button {
+    margin-top: 2em;
+}
+
+.add-patient-button-mobile {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.button-padding {
+    padding-bottom: 2.5em;
+}
+
+.button-padding-small {
+    padding-bottom: 1em;
+}
+
+.loading-padding {
+    padding-bottom: 3em;
+}
+
+.clickable-icons {
+    cursor: pointer;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.clickable-icons:hover {
+    opacity: 0.6;
+}
+
+.position-relative {
+    position: relative;
+}

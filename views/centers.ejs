@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Mitchell Sayer">
+
+    <!-- Title -->
+    <title>Venligboerne - Add New Center</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Karla:400,700' rel='stylesheet' type='text/css'>
+
+    <!-- CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css" rel='stylesheet' type='text/css'>
+    <link href="css/site.css" rel='stylesheet' type='text/css'>
+
+    <!-- JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/3.6.6/firebase.js"></script>
+    <!-- AngularFire -->
+    <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
+
+    <!-- Angular -->
+    <script src="js/app.js"></script>
+</head>
+
+<body ng-app="app" ng-controller="appController" ng-cloak>
+  <main>
+    <div class="container">
+      <h1 class="center-align">Add New Center</h1>
+      <div class="col s12">
+          <div class="row">
+              <form id="add-center-form" class="col s12" ng-submit="addCenter()">
+                  <h4>General Information</h4>
+                  <div class="row">
+                      <div class="input-field col s12">
+                          <input id="title" type="text" ng-model="center.title" required>
+                          <label for="title">Center Title</label>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="input-field col s6">
+                          <input id="latitude" type="number" step="any" ng-model="center.latitude" required>
+                          <label for="latitude">Latitude</label>
+                      </div>
+                      <div class="input-field col s6">
+                          <input id="longitude" type="number" step="any" ng-model="center.longitude" required>
+                          <label for="longitude">Longitude</label>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="input-field col s12">
+                          <input id="address" type="text" ng-model="center.address" required>
+                          <label for="address">Address</label>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="input-field col s12">
+                          <i class="material-icons prefix">phone</i>
+                          <input id="phone" type="tel" class="validate" ng-model="center.phone" required>
+                          <label for="phone">Telephone</label>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="input-field col s12">
+                          <img src="/img/facebook.png" class="prefix" />
+                          <input id="facebookID" type="number" class="validate" ng-model="center.facebookID">
+                          <label for="facebookID">Go to the Facebook group page and copy the number from the URL</label>
+                      </div>
+                  </div>
+
+                  <h5 style="color: grey">Hours</h5>
+                  <div class="row" ng-repeat="day in ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']">
+                      <div class="input-field col s12">
+                          <input id="{{day}}" type="text" class="validate" ng-model="center.hours[{{day}}]">
+                          <label for="{{day}}">{{day}} hours</label>
+                      </div>
+                  </div>
+
+                  <h5 style="color: grey">Select Image</h5>
+                  <input
+                    ng-model="photo"
+                    onchange="angular.element(this).scope().file_changed(this, '', '', 'centerImages', '')"
+                    type="file" accept="image/*"
+                  />
+                  <div class="row">
+                      <div class="col m12">
+                          <div class="button-padding"></div>
+                          <p class="center-align">
+                              <button id="signup-button" class="btn btn-large waves-effect waves-light blue darken-2" type="submit">Add Center</button>
+                          </p>
+                      </div>
+                  </div>
+              </form>
+          </div>
+      </div>
+    </div>
+  </main>
+</body>
